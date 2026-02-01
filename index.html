@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love, will you be my Valentine?</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(to bottom, #FFE4EC 0%, #FFC0CB 30%, #FFB6C1 60%, #FF69B4 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: relative;
+            padding-bottom: 200px; /* space above portrait row */
+        }
+
+        body.blow-up {
+            animation: screenShake 0.1s linear infinite;
+            pointer-events: none;
+        }
+
+        body.blow-up .blow-up-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @keyframes screenShake {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-8px, -4px); }
+            50% { transform: translate(8px, 4px); }
+            75% { transform: translate(-4px, 8px); }
+        }
+
+        .blow-up-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255,0,0,0.3) 0%, rgba(0,0,0,0.8) 70%);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .blow-up-overlay .message {
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        /* Subtle floating hearts */
+        .heart {
+            position: fixed;
+            font-size: 18px;
+            opacity: 0.6;
+            animation: floatHeart 5s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes floatHeart {
+            0%, 100% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% {
+                transform: translateY(-20vh) scale(1);
+                opacity: 0;
+            }
+        }
+
+        .heart1 { left: 8%; animation-delay: 0s; }
+        .heart2 { left: 18%; animation-delay: 1.2s; }
+        .heart3 { left: 28%; animation-delay: 2.4s; }
+        .heart4 { left: 42%; animation-delay: 0.6s; }
+        .heart5 { left: 58%; animation-delay: 1.8s; }
+        .heart6 { left: 72%; animation-delay: 3s; }
+        .heart7 { left: 85%; animation-delay: 0.3s; }
+        .heart8 { left: 92%; animation-delay: 2.1s; }
+
+        /* Main content */
+        .container {
+            background: rgba(255, 240, 245, 0.95);
+            border: 6px solid #DB7093;
+            border-radius: 16px;
+            box-shadow:
+                0 0 0 3px #FFB6C1,
+                0 16px 48px rgba(139, 69, 19, 0.25),
+                inset 0 0 20px rgba(255, 182, 193, 0.3);
+            padding: 40px 28px;
+            max-width: 420px;
+            width: calc(100% - 32px);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            margin-top: 24px;
+            animation: gentleIn 0.6s ease-out;
+        }
+
+        @keyframes gentleIn {
+            from {
+                transform: scale(0.95);
+                opacity: 0.9;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .corner {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: #FF69B4;
+            border-radius: 4px;
+        }
+        .corner-tl { top: -4px; left: -4px; }
+        .corner-tr { top: -4px; right: -4px; }
+        .corner-bl { bottom: -4px; left: -4px; }
+        .corner-br { bottom: -4px; right: -4px; }
+
+        h1 {
+            color: #C71585;
+            font-size: 14px;
+            line-height: 2;
+            margin-bottom: 24px;
+            text-shadow: 2px 2px 0 #FFB6C1;
+            letter-spacing: 1px;
+        }
+
+        .pixel-heart {
+            display: inline-block;
+            margin: 20px 0;
+        }
+        .pixel-heart svg {
+            width: 64px;
+            height: 64px;
+            animation: heartbeat 1.2s ease-in-out infinite;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 28px;
+        }
+
+        button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            padding: 18px 32px;
+            border: 4px solid #333;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 4px 4px 0 #222;
+            min-height: 52px;
+        }
+
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #222;
+        }
+
+        .yes-btn {
+            background: #E91E63;
+            color: white;
+        }
+        .yes-btn:hover {
+            background: #C2185B;
+        }
+
+        .no-btn {
+            background: #9E9E9E;
+            color: white;
+        }
+        .no-btn:hover {
+            background: #757575;
+        }
+
+        .response {
+            margin-top: 20px;
+            font-size: 10px;
+            line-height: 1.8;
+            color: #C71585;
+            min-height: 40px;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .response.show {
+            opacity: 1;
+        }
+
+        /* Portrait row – locked to bottom, looking at each other */
+        .portraits {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 180px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 0 8px 0;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .portrait-me,
+        .portrait-her {
+            height: 100%;
+            object-fit: contain;
+            object-position: bottom;
+            flex-shrink: 0;
+        }
+
+        .portrait-me {
+            max-width: 45%;
+            order: 1;
+        }
+
+        .portrait-her {
+            max-width: 45%;
+            order: 2;
+        }
+
+        /* Your portrait jumps on Yes */
+        .portrait-me.jump {
+            animation: portraitJump 0.5s ease-out 3;
+        }
+        @keyframes portraitJump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Your portrait surprised on No (before blow-up) */
+        .portrait-me.surprised {
+            animation: portraitSurprised 0.6s ease-out;
+        }
+        @keyframes portraitSurprised {
+            0% { transform: translateY(0) scale(1); }
+            20% { transform: translateY(-15px) scale(1.05); }
+            40% { transform: translateX(-8px) translateY(-10px); }
+            60% { transform: translateX(8px) translateY(-10px); }
+            80% { transform: translateX(-4px) translateY(-5px); }
+            100% { transform: translateX(0) translateY(0) scale(1); }
+        }
+
+        /* Celebration overlay (confetti) */
+        .celebration {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2000;
+            display: none;
+        }
+        .celebration.active {
+            display: block;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall 2.5s linear forwards;
+        }
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        @media (min-width: 500px) {
+            h1 { font-size: 16px; }
+            .container { padding: 48px 36px; }
+            .portraits { height: 200px; padding: 0 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="blow-up-overlay" id="blowUpOverlay" aria-hidden="true">
+        <p class="message">Something went wrong...<br>Refresh the page to try again.</p>
+    </div>
+
+    <div class="heart heart1">❤️</div>
+    <div class="heart heart2">💗</div>
+    <div class="heart heart3">❤️</div>
+    <div class="heart heart4">💗</div>
+    <div class="heart heart5">❤️</div>
+    <div class="heart heart6">💗</div>
+    <div class="heart heart7">❤️</div>
+    <div class="heart heart8">❤️</div>
+
+    <div class="container">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+
+        <h1>Love, will you be<br>my Valentine?</h1>
+
+        <div class="pixel-heart">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <rect x="30" y="20" width="10" height="10" fill="#E91E63"/>
+                <rect x="60" y="20" width="10" height="10" fill="#E91E63"/>
+                <rect x="20" y="30" width="10" height="10" fill="#E91E63"/>
+                <rect x="30" y="30" width="10" height="10" fill="#FF69B4"/>
+                <rect x="40" y="30" width="10" height="10" fill="#E91E63"/>
+                <rect x="50" y="30" width="10" height="10" fill="#FF69B4"/>
+                <rect x="60" y="30" width="10" height="10" fill="#E91E63"/>
+                <rect x="70" y="30" width="10" height="10" fill="#E91E63"/>
+                <rect x="20" y="40" width="10" height="10" fill="#E91E63"/>
+                <rect x="30" y="40" width="10" height="10" fill="#FF69B4"/>
+                <rect x="40" y="40" width="10" height="10" fill="#FFB6C1"/>
+                <rect x="50" y="40" width="10" height="10" fill="#FF69B4"/>
+                <rect x="60" y="40" width="10" height="10" fill="#FFB6C1"/>
+                <rect x="70" y="40" width="10" height="10" fill="#E91E63"/>
+                <rect x="20" y="50" width="10" height="10" fill="#E91E63"/>
+                <rect x="30" y="50" width="10" height="10" fill="#FF69B4"/>
+                <rect x="40" y="50" width="10" height="10" fill="#FFB6C1"/>
+                <rect x="50" y="50" width="10" height="10" fill="#FFB6C1"/>
+                <rect x="60" y="50" width="10" height="10" fill="#FF69B4"/>
+                <rect x="70" y="50" width="10" height="10" fill="#E91E63"/>
+                <rect x="30" y="60" width="10" height="10" fill="#E91E63"/>
+                <rect x="40" y="60" width="10" height="10" fill="#FF69B4"/>
+                <rect x="50" y="60" width="10" height="10" fill="#FF69B4"/>
+                <rect x="60" y="60" width="10" height="10" fill="#E91E63"/>
+                <rect x="40" y="70" width="10" height="10" fill="#E91E63"/>
+                <rect x="50" y="70" width="10" height="10" fill="#E91E63"/>
+            </svg>
+        </div>
+
+        <div class="buttons">
+            <button class="yes-btn" type="button" id="yesBtn">Yes! ❤️</button>
+            <button class="no-btn" type="button" id="noBtn">No... 💔</button>
+        </div>
+
+        <div class="response" id="response"></div>
+    </div>
+
+    <!-- Portraits: you (me) left, her right – looking at each other -->
+    <div class="portraits" aria-hidden="true">
+        <img class="portrait-me" id="portraitMe" src="assets/images/character-me.png" alt="">
+        <img class="portrait-her" id="portraitHer" src="assets/images/character-her.png" alt="">
+    </div>
+
+    <div class="celebration" id="celebration" aria-hidden="true"></div>
+
+    <script>
+        // Replace with your Formspree form endpoint (see FORMSPREE_SETUP.md)
+        const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+
+        function sendFormspree(answer) {
+            if (!FORMSPREE_ENDPOINT || FORMSPREE_ENDPOINT.includes('YOUR_FORM_ID')) return Promise.resolve();
+            return fetch(FORMSPREE_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    answer: answer,
+                    message: answer === 'yes' ? 'She clicked Yes!' : 'She clicked No.'
+                })
+            }).catch(function () { /* ignore network errors */ });
+        }
+
+        function handleYes() {
+            var btn = document.getElementById('yesBtn');
+            var noBtn = document.getElementById('noBtn');
+            var response = document.getElementById('response');
+            var portraitMe = document.getElementById('portraitMe');
+            var celebration = document.getElementById('celebration');
+
+            btn.disabled = true;
+            noBtn.disabled = true;
+
+            sendFormspree('yes').then(function () {
+                response.textContent = 'Yay! You made me the happiest! 🌟';
+                response.classList.add('show');
+
+                portraitMe.classList.add('jump');
+                celebration.classList.add('active');
+
+                var colors = ['#E91E63', '#FF69B4', '#FFB6C1', '#C71585', '#FFD700'];
+                for (var i = 0; i < 80; i++) {
+                    (function (j) {
+                        setTimeout(function () {
+                            var piece = document.createElement('div');
+                            piece.className = 'confetti-piece';
+                            piece.style.left = (10 + Math.random() * 80) + '%';
+                            piece.style.top = '-20px';
+                            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                            piece.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+                            piece.style.animationDelay = (j * 0.02) + 's';
+                            celebration.appendChild(piece);
+                            setTimeout(function () { piece.remove(); }, 4000);
+                        }, j * 25);
+                    })(i);
+                }
+
+                setTimeout(function () {
+                    portraitMe.classList.remove('jump');
+                }, 1600);
+            });
+        }
+
+        function handleNo() {
+            var btn = document.getElementById('noBtn');
+            var yesBtn = document.getElementById('yesBtn');
+            var portraitMe = document.getElementById('portraitMe');
+            var body = document.body;
+            var overlay = document.getElementById('blowUpOverlay');
+
+            yesBtn.disabled = true;
+            btn.disabled = true;
+
+            portraitMe.classList.add('surprised');
+
+            setTimeout(function () {
+                sendFormspree('no').then(function () {
+                    body.classList.add('blow-up');
+                    overlay.setAttribute('aria-hidden', 'false');
+                    overlay.style.opacity = '1';
+                });
+            }, 700);
+        }
+
+        document.getElementById('yesBtn').addEventListener('click', handleYes);
+        document.getElementById('noBtn').addEventListener('click', handleNo);
+    </script>
+</body>
+</html>
