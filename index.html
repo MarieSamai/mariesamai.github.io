@@ -288,8 +288,21 @@
             flex-shrink: 0;
         }
 
-        .portrait-me {
+        .portrait-me-wrap {
             max-width: 45%;
+            height: 100%;
+            order: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-start;
+            transition: transform 0.7s ease-out;
+        }
+
+        .portrait-me-wrap.closer {
+            transform: translateX(18vw);
+        }
+
+        .portrait-me {
             order: 1;
         }
 
@@ -425,7 +438,9 @@
 
     <!-- Portraits: you (me) left, her right – looking at each other -->
     <div class="portraits" aria-hidden="true">
-        <img class="portrait-me" id="portraitMe" src="assets/images/character-me.png" alt="">
+        <div class="portrait-me-wrap" id="portraitMeWrap">
+            <img class="portrait-me" id="portraitMe" src="assets/images/character-me.png" alt="">
+        </div>
         <img class="portrait-her" id="portraitHer" src="assets/images/character-her.png" alt="">
     </div>
 
@@ -462,6 +477,7 @@
                 response.classList.add('show');
 
                 portraitMe.classList.add('jump');
+                document.getElementById('portraitMeWrap').classList.add('closer');
                 celebration.classList.add('active');
 
                 var heartChars = ['❤️', '💗', '💕', '💖', '❤️', '💗'];
