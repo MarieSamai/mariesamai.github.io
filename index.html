@@ -26,34 +26,21 @@
             padding-bottom: 200px; /* space above portrait row */
         }
 
-        body.blow-up {
-            animation: screenShake 0.1s linear infinite;
-            pointer-events: none;
-        }
-
-        body.blow-up .blow-up-overlay {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        @keyframes screenShake {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(-8px, -4px); }
-            50% { transform: translate(8px, 4px); }
-            75% { transform: translate(-4px, 8px); }
-        }
-
         .blow-up-overlay {
             position: fixed;
             inset: 0;
-            background: radial-gradient(circle at center, rgba(255,0,0,0.3) 0%, rgba(0,0,0,0.8) 70%);
+            background: #000;
             z-index: 9999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.5s;
+            transition: opacity 0.8s ease-out;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .blow-up-overlay.active {
+            pointer-events: auto;
         }
 
         .blow-up-overlay .message {
@@ -62,6 +49,71 @@
             text-align: center;
             padding: 20px;
             text-shadow: 2px 2px 0 #000;
+            opacity: 0;
+            transition: opacity 0.5s 0.5s;
+        }
+
+        .blow-up-overlay.active .message {
+            opacity: 1;
+        }
+
+        /* Screen crack fragments – fly apart then black */
+        .crack-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 8000;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        .crack-overlay.active {
+            opacity: 1;
+        }
+
+        .crack-fragment {
+            position: absolute;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+            opacity: 0.98;
+            animation: crackFly 0.7s ease-out forwards;
+        }
+
+        @keyframes crackFly {
+            0% {
+                transform: translate(0, 0) rotate(0);
+                opacity: 0.98;
+            }
+            100% {
+                transform: translate(var(--tx, 0), var(--ty, 0)) rotate(var(--r, 0));
+                opacity: 0;
+            }
+        }
+
+        /* Portrait explosion particles */
+        .portrait-explosion {
+            position: fixed;
+            inset: 0;
+            z-index: 5000;
+            pointer-events: none;
+        }
+
+        .explosion-particle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: explodeOut 0.7s ease-out forwards;
+        }
+
+        @keyframes explodeOut {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--ex), var(--ey)) scale(0);
+                opacity: 0;
+            }
         }
 
         /* Subtle floating hearts */
@@ -268,7 +320,7 @@
             100% { transform: translateX(0) translateY(0) scale(1); }
         }
 
-        /* Celebration overlay (confetti) */
+        /* Celebration overlay – hearts thrown toward screen */
         .celebration {
             position: fixed;
             inset: 0;
@@ -280,15 +332,24 @@
             display: block;
         }
 
-        .confetti-piece {
+        .heart-thrown {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            animation: confettiFall 2.5s linear forwards;
+            font-size: 28px;
+            line-height: 1;
+            animation: heartTowardScreen 1.2s ease-out forwards;
+            pointer-events: none;
         }
-        @keyframes confettiFall {
-            to {
-                transform: translateY(100vh) rotate(720deg);
+        @keyframes heartTowardScreen {
+            0% {
+                transform: scale(0.15);
+                opacity: 0.9;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3.5);
+                opacity: 0.4;
             }
         }
 
@@ -303,6 +364,8 @@
     <div class="blow-up-overlay" id="blowUpOverlay" aria-hidden="true">
         <p class="message">Something went wrong...<br>Refresh the page to try again.</p>
     </div>
+    <div class="crack-overlay" id="crackOverlay" aria-hidden="true"></div>
+    <div class="portrait-explosion" id="portraitExplosion" aria-hidden="true"></div>
 
     <div class="heart heart1">❤️</div>
     <div class="heart heart2">💗</div>
@@ -395,27 +458,26 @@
             noBtn.disabled = true;
 
             sendFormspree('yes').then(function () {
-                response.textContent = 'Yay! You made me the happiest! 🌟';
+                response.textContent = 'YAYYYYYYY!';
                 response.classList.add('show');
 
                 portraitMe.classList.add('jump');
                 celebration.classList.add('active');
 
-                var colors = ['#E91E63', '#FF69B4', '#FFB6C1', '#C71585', '#FFD700'];
-                for (var i = 0; i < 80; i++) {
+                var heartChars = ['❤️', '💗', '💕', '💖', '❤️', '💗'];
+                for (var i = 0; i < 50; i++) {
                     (function (j) {
                         setTimeout(function () {
-                            var piece = document.createElement('div');
-                            piece.className = 'confetti-piece';
-                            piece.style.left = (10 + Math.random() * 80) + '%';
-                            piece.style.top = '-20px';
-                            piece.style.background = colors[Math.floor(Math.random() * colors.length)];
-                            piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                            piece.style.animationDuration = (2 + Math.random() * 1.5) + 's';
-                            piece.style.animationDelay = (j * 0.02) + 's';
-                            celebration.appendChild(piece);
-                            setTimeout(function () { piece.remove(); }, 4000);
-                        }, j * 25);
+                            var heart = document.createElement('div');
+                            heart.className = 'heart-thrown';
+                            heart.textContent = heartChars[j % heartChars.length];
+                            heart.style.left = (25 + Math.random() * 50) + '%';
+                            heart.style.top = (45 + Math.random() * 40) + '%';
+                            heart.style.animationDuration = (0.9 + Math.random() * 0.6) + 's';
+                            heart.style.animationDelay = (j * 0.03) + 's';
+                            celebration.appendChild(heart);
+                            setTimeout(function () { heart.remove(); }, 2000);
+                        }, j * 40);
                     })(i);
                 }
 
@@ -429,8 +491,9 @@
             var btn = document.getElementById('noBtn');
             var yesBtn = document.getElementById('yesBtn');
             var portraitMe = document.getElementById('portraitMe');
-            var body = document.body;
             var overlay = document.getElementById('blowUpOverlay');
+            var crackOverlay = document.getElementById('crackOverlay');
+            var explosionEl = document.getElementById('portraitExplosion');
 
             yesBtn.disabled = true;
             btn.disabled = true;
@@ -438,12 +501,62 @@
             portraitMe.classList.add('surprised');
 
             setTimeout(function () {
-                sendFormspree('no').then(function () {
-                    body.classList.add('blow-up');
-                    overlay.setAttribute('aria-hidden', 'false');
-                    overlay.style.opacity = '1';
+                sendFormspree('no').then(function () {});
+
+                var rect = portraitMe.getBoundingClientRect();
+                var cx = rect.left + rect.width / 2;
+                var cy = rect.top + rect.height / 2;
+                var colors = ['#E91E63', '#FF69B4', '#C71585', '#8B0000', '#FFB6C1'];
+
+                for (var i = 0; i < 35; i++) {
+                    var angle = (Math.PI * 2 * i) / 35 + Math.random() * 0.5;
+                    var dist = 80 + Math.random() * 120;
+                    var ex = Math.cos(angle) * dist;
+                    var ey = Math.sin(angle) * dist;
+                    var p = document.createElement('div');
+                    p.className = 'explosion-particle';
+                    p.style.left = (cx - 6) + 'px';
+                    p.style.top = (cy - 6) + 'px';
+                    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    p.style.setProperty('--ex', ex + 'px');
+                    p.style.setProperty('--ey', ey + 'px');
+                    explosionEl.appendChild(p);
+                    setTimeout(function (el) { el.remove(); }, 800, p);
+                }
+
+                portraitMe.style.opacity = '0';
+                portraitMe.style.transition = 'opacity 0.2s';
+
+                crackOverlay.classList.add('active');
+                crackOverlay.innerHTML = '';
+
+                var fragments = [
+                    { left: '0%', top: '0%', width: '52%', height: '52%', tx: '-100vw', ty: '-100vh', r: '-20deg' },
+                    { left: '48%', top: '0%', width: '52%', height: '52%', tx: '100vw', ty: '-100vh', r: '20deg' },
+                    { left: '0%', top: '48%', width: '52%', height: '52%', tx: '-100vw', ty: '100vh', r: '20deg' },
+                    { left: '48%', top: '48%', width: '52%', height: '52%', tx: '100vw', ty: '100vh', r: '-20deg' },
+                    { left: '24%', top: '24%', width: '52%', height: '52%', tx: '-50vw', ty: '-50vh', r: '15deg' },
+                    { left: '38%', top: '38%', width: '40%', height: '40%', tx: '40vw', ty: '40vh', r: '-18deg' }
+                ];
+                fragments.forEach(function (f) {
+                    var frag = document.createElement('div');
+                    frag.className = 'crack-fragment';
+                    frag.style.left = f.left;
+                    frag.style.top = f.top;
+                    frag.style.width = f.width;
+                    frag.style.height = f.height;
+                    frag.style.setProperty('--tx', f.tx);
+                    frag.style.setProperty('--ty', f.ty);
+                    frag.style.setProperty('--r', f.r);
+                    crackOverlay.appendChild(frag);
                 });
-            }, 700);
+
+                setTimeout(function () {
+                    overlay.classList.add('active');
+                    overlay.style.opacity = '1';
+                    overlay.setAttribute('aria-hidden', 'false');
+                }, 400);
+            }, 600);
         }
 
         document.getElementById('yesBtn').addEventListener('click', handleYes);
